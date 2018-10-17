@@ -1,0 +1,25 @@
+<div class="ticket_visitor">
+    <div class="card-header text-white bg-info">
+        <h4># Billet</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                {{ form_row(form.lastname) }}
+            </div>
+            <div class="col-md-6 col-sm-6">
+                {{ form_row(form.firstname) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-6" id="birthdate">
+                {{ form_row(form.birthdate) }}
+            </div>
+            <div class="col-md-6 col-sm-6">
+                {{ form_row(form.nationality) }}
+            </div>
+        </div>
+        {{ form_row(form.reducedRate) }}
+        <hr />
+    </div>
+</div>

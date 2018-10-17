@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Musée du Louvres - Paiement{% endblock %}
+
+{% block body %}
+    <section id="tickets">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-md-9 col-sm-8 wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="about-thumb">
+                        {% for message in app.flashes('notice') %}
+                            <div class="alert alert-success" role="alert">
+                                <strong>{{ message }}.</strong>
+                                You will receive a email
+                            </div>
+                        {% endfor %}
+                        {% for message in app.flashes('error') %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                        <div class="card">
+                            <div class="card-header">
+                                Date de visite : {{ visitDate }} <br> Prix : <strong id="price">{{ price }}</strong> €
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group">
+                                    {% for visitor in visitors %}
+                                        <li class="list-group-item">{{ visitor.lastname }} {{ visitor.firstname }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <script src="https://js.stripe.com/v3/"></script>
+                            <div class="card-footer">
+                                {{ form_start(paymentForm, {attr: {id: paymentForm.vars.id}}) }}
+                                <div class="form-group">
+                                    <label for="card-element">
+                                        Carte de crédit
+                                    </label>
+                                    <div id="card-element" class="form-control"></div>
+                                    <div id="card-errors" class="help-block" role="alert"></div>
+                                </div>
+                                {{ form_widget(paymentForm.token) }}
+                                {{ form_end(paymentForm) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 wow fadeInUp about-img" data-wow-delay="0.6s">
+                    <img src="{{ asset('img/about-img.jpg') }}" class="img-fluid rounded-circle" alt="About">
+                </div>
+            </div>
+        </div>
+        <script>
+            const form = document.getElementById('{{ paymentForm.vars.id }}');
+            const errors = document.getElementById('card-errors');
+            const stripe = Stripe('{{ stripe_public_key }}');
+            const elements = stripe.elements();
+            const card = elements.create('card');
+            card.mount('#card-element');
+            card.addEventListener('change', event => {
+                if (event.error) {
+                    errors.textContent = event.error.message;
+                    form.classList.add('has-error');
+                } else {
+                    errors.textContent = '';
+                    form.classList.remove('has-error');
+                }
+            });
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+                stripe.createToken(card).then(result => {
+                    if (result.error) {
+                        errors.textContent = result.error.message;
+                        form.classList.add('has-error');
+                    } else {
+                        document.getElementById('{{ paymentForm.children.token.vars.id }}').setAttribute('value', result.token.id);
+                        form.submit();
+                    }
+                });
+            });
+        </script>
+    </section>
+
+{% endblock %}

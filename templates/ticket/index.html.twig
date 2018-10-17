@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Musée du Louvres - Billeterie{% endblock %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block body %}
+    <section id="tickets">
+        <div class="container">
+            {{ form_start(form) }}
+            <div class="row">
+                <div class="col-lg-8 col-md-8 col-sm-12 wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="about-thumb">
+                        <div class="alert alert-warning" role="alert">
+                            Pour les tarifs réduits, merci de vous munir d'un justificatif le jour de votre visite.
+                        </div>
+                        <div class="card">
+                            <div class="card-header text-white bg-primary">
+                                Commander des billets
+                            </div>
+                            <div class="card-body">
+                                <label for="reservation_email">Email</label>
+                                <div class="input-group mb-3">
+                                    {{ form_widget(form.email) }}
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="index-group">
+                                            <label for="visitDate" class="required">Date de visite</label>
+                                            <div class="input-group date" id="datetimepicker" data-target-input="nearest" data-date="{{ outOfStockDates|json_encode() }}">
+                                                {{ form_widget(form.visitDate, {'attr': {'id' : 'visitDate', 'class': 'form-control datetimepicker-input'}}) }}
+                                                <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label>Nombre de billets</label>
+                                            <select id="ticketControl" class="form-control">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                                <option value="9">9</option>
+                                                <option value="10">10</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    {{ form_widget(form.halfDay) }}
+                                </div>
+                            </div>
+                            <div class="card">
+                                {% macro prototype(visitor) %}
+                                    <div class="ticket_visitor" id="ticket_visitor_0">
+                                        <div class="card-header text-white bg-info">
+                                            <h4># Billet</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    {{ form_row(visitor.lastname) }}
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    {{ form_row(visitor.firstname) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6" id="birthdate">
+                                                    {{ form_row(visitor.birthdate) }}
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    {{ form_row(visitor.nationality) }}
+                                                </div>
+                                            </div>
+                                            {{ form_row(visitor.reducedRate) }}
+                                            <hr />
+                                        </div>
+                                    </div>
+                                {% endmacro %}
+                                <div id="tickets_visitors" data-prototype="{% filter escape %}{% include 'form/visitorType.html.twig' with {'form': form.visitors.vars.prototype} %}{% endfilter %}">
+                                    {% import _self as func %}
+                                    {% for visitor in form.visitors %}
+                                        {% if visitor %}{{ func.prototype(visitor) }}{% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 wow fadeInUp about-img" data-wow-delay="0.6s">
+                    <div class="alert alert-info" role="alert">
+                        <h4 class="alert-heading">Les tarifs sont les suivants : </h4>
+                        <hr>
+                        <p class="mb-0">Tarif « normal » à partir de 12 ans à 16 €</p><br>
+                        <p class="mb-0">Tarif « enfant » à partir de 4 ans et jusqu’à 12 ans, à 8 € (l’entrée est gratuite pour les enfants de moins de 4 ans)</p><br>
+                        <p class="mb-0">Tarif « senior » à partir de 60 ans pour 12  €</p><br>
+                        <p class="mb-0">Tarif « réduit » de 10 € accordé dans certaines conditions (étudiant, employé du musée, d’un service du Ministère de la Culture, militaire…)</p><br>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            Votre commande
+                        </div>
+                        <div class="card-body">
+                            <p><i class="fa fa-ticket" aria-hidden="true"></i> : <strong id="info-tickets">0</strong></p>
+                            <br>
+                            <p><i class="fa fa-calendar-o" aria-hidden="true"></i> : <strong id="info-date">0</strong></p>
+                            <br>
+                        </div>
+                        <div class="card-footer">
+                            {{ form_widget(form.save) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts_footer %}
+    <script src="{{ asset('js/reservation.js') }}"></script>
+{% endblock %}

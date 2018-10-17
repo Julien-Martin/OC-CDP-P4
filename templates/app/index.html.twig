@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Musée du Louvre - Page d'accueils{% endblock %}
+
+{% block body %}
+    <section id="home">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col col-md-12 col-sm-12 wow fadeInUp" data-wow-delay="0.3s">
+                    <h1 class="wow fadeInUp" data-wow-delay="0.6s">Musée du Louvre</h1>
+                    <p class="wow fadeInUp" data-wow-delay="0.9s">Chaque passage dans la capitale mérite une visite du Louvre</p>
+                    <br>
+                    <a href="/billeterie" class="smoothScroll btn btn-success btn-lg wow fadeInUp" data-wow-delay="1.2s">Billeterie</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="gallery">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 wow fadeInUp mx-auto" data-wow-delay="0.3s">
+                    <div class="section-title">
+                        <h1>Infos Pratiques</h1>
+                    </div>
+                </div>
+                <ul class="grid cs-style-4 row">
+                    <li class="col-md-6 col-sm-6">
+                        <figure>
+                            <div><img src="{{ asset('img/gallery-img1.jpg') }}" alt="image 1"></div>
+                            <figcaption>
+                                <h1>Horaires</h1>
+                                <small>
+                                    Lundi : 9 h - 18 h <br>
+                                    Mardi : Fermé <br>
+                                    Mercredi : 9 h - 21h45 <br>
+                                    Jeudi : 9 h - 18 h <br>
+                                    Vendredi : 9 h - 21h45 <br>
+                                    Samedi : 9 h - 18 h <br>
+                                    Dimanche : 9 h - 18 h <br>
+                                </small>
+                                <hr>
+                                <small>Fermé le 1er mai, le 1er novembre et le 25 décembre</small>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    <li class="col-md-6 col-sm-6">
+                        <figure>
+                            <div><img src="{{ asset('img/gallery-img2.jpg') }}" alt="image 2"></div>
+                            <figcaption>
+                                <h1>Accès</h1>
+                                <small>En métro : <br> lignes 1 et 7, station Palais Royal / Musée du Louvre</small>
+                                <hr>
+                                <small>En voiture: <br> Avenue du Général-Lemonnier</small>
+                            </figcaption>
+                        </figure>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
