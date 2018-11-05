@@ -77,34 +77,8 @@ class PaymentController extends AbstractController
 
         //Génération d'un QRCode et envoi du mail
         if($reservation->getReservationStatus() == 1){
-            $qrCode = new QrCode();
-            $qrCode
-                ->setText($reservation->getReservationCode())
-                ->setSize(300)
-                ->setPadding(10)
-                ->setErrorCorrection('high')
-                ->setForegroundColor(array('r' => 0, 'g' => 0, 'b' => 0, 'a' => 0))
-                ->setBackgroundColor(array('r' => 255, 'g' => 255, 'b' => 255, 'a' => 0))
-                ->setLabelFontSize(16)
-                ->setImageType(QrCode::IMAGE_TYPE_PNG)
-            ;
-            $qrCodeImg = '<img src="data:'.$qrCode->getContentType().';base64,'.$qrCode->generate().'" />';
-
-
-            $message = new \Swift_Message();
-            $imgUrl = $message->embed(\Swift_Image::fromPath('img/logo.png'));
-            $qrImg = $message->embed(\Swift_Image::fromPath('data:'.$qrCode->getContentType().';base64,'.$qrCode->generate()));
-            $message
-                ->setFrom($this->getParameter('email'))
-                ->setTo($reservation->getEmail())
-                ->setSubject('Billet pour le Musée du Louvre')
-                ->setBody($this->renderView('payment/email.html.twig', [
-                    'reservation' => $reservation,
-                    'qrCodeImage' => $qrCodeImg,
-                    'logo' => $imgUrl,
-                    'qrImg' => $qrImg
-                ]), 'text/html');
-            $mailer->send($message);
+            $qrCode = $this->createQRCode($reservation);
+            $mailer->send($this->createEmail($reservation, $qrCode));
         }
 
         return $this->render('payment/index.html.twig', [
@@ -116,12 +90,7 @@ class PaymentController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/email", name="email")
-     */
-    public function email(ObjectManager $manager){
-        $reservation = $manager->getRepository(Reservation::class)->findOneBy(['reservationCode' => 'b5efca09ae24e80b0f3014764faf23e613ddc43e']);
+    private function createQRCode(Reservation $reservation) {
         $qrCode = new QrCode();
         $qrCode
             ->setText($reservation->getReservationCode())
@@ -133,12 +102,22 @@ class PaymentController extends AbstractController
             ->setLabelFontSize(16)
             ->setImageType(QrCode::IMAGE_TYPE_PNG)
         ;
+        return $qrCode;
+    }
 
-        $qrCodeImg = '<img src="data:'.$qrCode->getContentType().';base64,'.$qrCode->generate().'" />';
-
-        return $this->render('payment/email.html.twig', [
-            'reservation' => $reservation,
-            'qrCodeImage' => $qrCodeImg
-        ]);
+    private function createEmail(Reservation $reservation, QrCode $qrCode){
+        $message = new \Swift_Message();
+        $imgUrl = $message->embed(\Swift_Image::fromPath('img/logo.png'));
+        $qrImg = $message->embed(\Swift_Image::fromPath('data:'.$qrCode->getContentType().';base64,'.$qrCode->generate()));
+        $message
+            ->setFrom($this->getParameter('email'))
+            ->setTo($reservation->getEmail())
+            ->setSubject('Billet pour le Musée du Louvre')
+            ->setBody($this->renderView('payment/email.html.twig', [
+                'reservation' => $reservation,
+                'logo' => $imgUrl,
+                'qrImg' => $qrImg
+            ]), 'text/html');
+        return $message;
     }
 }
