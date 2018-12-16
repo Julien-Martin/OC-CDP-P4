@@ -3,3 +3,9 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     form_themes: ['bootstrap_4_layout.html.twig']
+    globals:
+        rate_normal: '%rate_normal%'
+        rate_children: '%rate_children%'
+        rate_senior: '%rate_senior%'
+        rate_reduced: '%rate_reduced%'
+        rate_baby: '%rate_baby%'

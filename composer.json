@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "codeitnowin/barcode": "^3.0",
+        "doctrine/annotations": "^1.6",
         "sensio/framework-extra-bundle": "^5.2",
         "stripe/stripe-php": "^6.19",
         "symfony/apache-pack": "^1.0",
@@ -18,7 +19,7 @@
         "symfony/orm-pack": "^1.0",
         "symfony/swiftmailer-bundle": "^3.2",
         "symfony/twig-bundle": "*",
-        "symfony/validator": "*",
+        "symfony/validator": "4.1.*",
         "symfony/web-server-bundle": "*",
         "symfony/yaml": "*"
     },

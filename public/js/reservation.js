@@ -13,7 +13,6 @@ jQuery(function ($) {
         $('#reservation_halfDay').parent().remove();
     }
 
-    infoDate.text(moment().format('DD/MM/YYYY'));
     outOfStockSelector.forEach(function (elem) {
         outOfStockDates.push(moment(elem.visitDate.date.toString()));
     });
@@ -27,6 +26,7 @@ jQuery(function ($) {
         daysOfWeekDisabled: [0, 2],
         disabledDates: outOfStockDates
     });
+    infoDate.text(visitDate.val());
     datepicker.on('input', () => {
         infoDate.text(visitDate.val());
     });
