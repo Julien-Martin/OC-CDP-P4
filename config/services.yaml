@@ -11,6 +11,7 @@ parameters:
     rate_reduced: 10
     rate_baby: 0
     halfDay_percentage: 0.7
+    halfDay_hours: 23
     limit_per_day: 1000
     email: 'reykozz15@gmail.com'
 

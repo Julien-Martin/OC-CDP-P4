@@ -2,38 +2,64 @@
 
 namespace App\Controller;
 
-use App\Entity\Reservation;
+use App\Form\PaymentType;
 use App\Repository\ReservationRepository;
 use App\Service\MailService;
+use App\Service\PriceService;
 use App\Service\QRCodeService;
 use App\Service\PaymentService;
-use CodeItNow\BarcodeBundle\Utils\QrCode;
 use Doctrine\Common\Persistence\ObjectManager;
-use Stripe\Charge;
-use Stripe\Error\Card;
-use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Class PaymentController
+ * @package App\Controller
+ */
 class PaymentController extends AbstractController
 {
-
+    /**
+     * @var ObjectManager
+     */
     private $_manager;
+    /**
+     * @var ReservationRepository
+     */
     private $_repository;
+    /**
+     * @var QRCodeService
+     */
     private $_qrcodeService;
+    /**
+     * @var MailService
+     */
     private $_mailService;
+    /**
+     * @var PaymentService
+     */
     private $_paymentService;
+    /**
+     * @var PriceService
+     */
+    private $_priceService;
 
-    public function __construct(ObjectManager $objectManager, ReservationRepository $repository, QRCodeService $QRCodeService, MailService $mailService, PaymentService $paymentService){
+    /**
+     * PaymentController constructor.
+     * @param ObjectManager $objectManager
+     * @param ReservationRepository $repository
+     * @param QRCodeService $QRCodeService
+     * @param MailService $mailService
+     * @param PaymentService $paymentService
+     * @param PriceService $priceService
+     */
+    public function __construct(ObjectManager $objectManager, ReservationRepository $repository, QRCodeService $QRCodeService, MailService $mailService, PaymentService $paymentService, PriceService $priceService){
         $this->_manager = $objectManager;
         $this->_repository = $repository;
         $this->_qrcodeService = $QRCodeService;
         $this->_mailService = $mailService;
         $this->_paymentService = $paymentService;
+        $this->_priceService = $priceService;
     }
 
     /**
@@ -48,20 +74,12 @@ class PaymentController extends AbstractController
         if($reservation == null){
             return $this->redirectToRoute('home');
         }
-        $price = $reservation->getPrice();
         $visitors = $reservation->getVisitors();
-
-        $form = $this->createFormBuilder()
-            ->add('token', HiddenType::class, [
-                'constraints' => [new NotBlank()],
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Payer',
-                'attr' => [
-                    'class' => 'btn btn-primary'
-                ]
-            ])
-            ->getForm();
+        $visitorsPrice = [];
+        foreach ($visitors as $visitor){
+            $visitorsPrice[] = $this->_priceService->computePrice($visitor, $reservation);
+        }
+        $form = $this->createForm(PaymentType::class);
         $form->handleRequest($request);
 
         //Procéder au paiement
@@ -80,6 +98,7 @@ class PaymentController extends AbstractController
 
         return $this->render('payment/index.html.twig', [
             'visitors' => $visitors,
+            'visitorsPrice' => $visitorsPrice,
             'mail' => $reservation->getEmail(),
             'price' => $reservation->getPrice(),
             'visitDate' => $reservation->getVisitDate()->format("d/F/Y"),

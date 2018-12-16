@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Reservation;
+use App\Entity\Visitor;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
@@ -25,11 +26,11 @@ class PriceService {
     }
 
     /**
-     * Compute price with age
+     * Compute total price with age
      * @param Reservation $reservation
      * @return int|mixed
      */
-    public function computePrice(Reservation $reservation){
+    public function computeTotalPrice(Reservation $reservation){
         $visitorNumber = count($reservation->getVisitors());
         $price = 0;
         $halfDay = $reservation->getHalfDay();
@@ -53,4 +54,33 @@ class PriceService {
         }
         return $price;
     }
+
+    /**
+     * Compute price by visitor
+     * @param Visitor $visitor
+     * @param Reservation $reservation
+     * @return int|mixed
+     */
+    public function computePrice(Visitor $visitor, Reservation $reservation){
+        $price = 0;
+        $halfDay = $reservation->getHalfDay();
+        $age = $this->_ageService->getAge($visitor->getBirthdate());
+        $reducedRate = $visitor->getReducedRate();
+        if($age >= 12 && $age < 60 && $reducedRate == false){
+            $price += $this->_params->get('rate_normal');
+        } elseif ($age >= 4 && $age < 12 && $reducedRate == false){
+            $price += $this->_params->get('rate_children');
+        } elseif ($age >= 60 && $reducedRate == false){
+            $price += $this->_params->get('rate_senior');
+        } elseif($age >= 4 && $reducedRate == true){
+            $price += $this->_params->get('rate_reduced');
+        } elseif($age < 4) {
+            $price += $this->_params->get('rate_baby');
+        }
+        if($halfDay){
+            $price *= $this->_params->get('halfDay_percentage');
+        }
+        return $price;
+    }
+
 }

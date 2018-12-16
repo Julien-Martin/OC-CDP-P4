@@ -21,6 +21,7 @@
                             <div class="card-body">
                                 <label for="reservation_email">Email</label>
                                 <div class="input-group mb-3">
+                                    {{ form_errors(form.email) }}
                                     {{ form_widget(form.email) }}
                                 </div>
                                 <div class="row">
@@ -28,6 +29,7 @@
                                         <div class="index-group">
                                             <label for="visitDate" class="required">Date de visite</label>
                                             <div class="input-group date" id="datetimepicker" data-target-input="nearest" data-date="{{ outOfStockDates|json_encode() }}">
+                                                {{ form_errors(form.visitDate) }}
                                                 {{ form_widget(form.visitDate, {'attr': {'id' : 'visitDate', 'class': 'form-control datetimepicker-input'}}) }}
                                                 <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
                                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -37,7 +39,7 @@
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label>Nombre de billets</label>
+                                            <label for="ticketControl">Nombre de billets</label>
                                             <select id="ticketControl" class="form-control">
                                                 <option value="1">1</option>
                                                 <option value="2">2</option>

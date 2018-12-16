@@ -12,13 +12,32 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class TicketController
+ * @package App\Controller
+ */
 class TicketController extends AbstractController
 {
 
+    /**
+     * @var ObjectManager
+     */
     private $_manager;
+    /**
+     * @var ReservationRepository
+     */
     private $_repository;
+    /**
+     * @var PriceService
+     */
     private $_priceService;
 
+    /**
+     * TicketController constructor.
+     * @param ObjectManager $manager
+     * @param ReservationRepository $repository
+     * @param PriceService $priceService
+     */
     public function __construct(ObjectManager $manager, ReservationRepository $repository, PriceService $priceService){
         $this->_manager = $manager;
         $this->_repository = $repository;
@@ -37,7 +56,7 @@ class TicketController extends AbstractController
         $reservation->setReservationStatus(0);
         $reservation->setReservationDate(new \DateTime());
         $outOfStockDates = $this->_repository->findOutOfStock($this->getParameter('limit_per_day'));
-        if(date('H') >= 14){
+        if(date('H') >= $this->getParameter('halfDay_hours')){
             $reservation->setHalfDay(true);
         }
         $visitor = new Visitor();
@@ -48,7 +67,7 @@ class TicketController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $reservation->setPrice($this->_priceService->computePrice($reservation));
+            $reservation->setPrice($this->_priceService->computeTotalPrice($reservation));
             $this->_manager->persist($reservation);
             $this->_manager->flush();
             return $this->redirectToRoute('payment', ['reservationCode' => $reservation->getReservationCode()]);

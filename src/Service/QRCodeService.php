@@ -4,14 +4,29 @@ namespace App\Service;
 
 use CodeItNow\BarcodeBundle\Utils\QrCode;
 
+/**
+ * Class QRCodeService
+ * @package App\Service
+ */
 class QRCodeService {
 
+    /**
+     * @var QrCode
+     */
     private $_qrCode;
 
+    /**
+     * QRCodeService constructor.
+     */
     public function __construct(){
         $this->_qrCode = new QrCode();
     }
 
+    /**
+     * Transform reservation Code in QRCode
+     * @param $reservationCode
+     * @return QrCode
+     */
     public function createQRCode($reservationCode){
         try {
             $this->_qrCode

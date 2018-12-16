@@ -8,13 +8,27 @@ use Stripe\Charge;
 use Stripe\Error\Card;
 use Stripe\Stripe;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * Class PaymentService
+ * @package App\Service
+ */
 class PaymentService {
 
+    /**
+     * @var FlashBagInterface
+     */
     private $_flash;
+    /**
+     * @var ObjectManager
+     */
     private $_manager;
 
+    /**
+     * PaymentService constructor.
+     * @param FlashBagInterface $flashBag
+     * @param ObjectManager $manager
+     */
     public function __construct(FlashBagInterface $flashBag, ObjectManager $manager){
         Stripe::setApiKey(getenv('STRIPE_SECRET'));
         $this->_flash = $flashBag;
@@ -22,6 +36,11 @@ class PaymentService {
 
     }
 
+    /**
+     * Charge order
+     * @param Reservation $reservation
+     * @param $token
+     */
     public function chargeOrder(Reservation $reservation, $token){
         try {
             Charge::create([

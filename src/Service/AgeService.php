@@ -9,7 +9,7 @@ namespace App\Service;
 class AgeService {
 
     /**
-     * Get age
+     * Get age with birthday and now
      * @param $birthday
      * @return int
      */

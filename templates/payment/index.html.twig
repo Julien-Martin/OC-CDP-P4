@@ -25,8 +25,8 @@
                             </div>
                             <div class="card-body">
                                 <ul class="list-group">
-                                    {% for visitor in visitors %}
-                                        <li class="list-group-item">{{ visitor.lastname }} {{ visitor.firstname }}</li>
+                                    {% for keys, visitor in visitors %}
+                                        <li class="list-group-item">{{ visitor.lastname }} {{ visitor.firstname }} - {{ visitorsPrice[keys] }} €</li>
                                     {% endfor %}
                                 </ul>
                             </div>
