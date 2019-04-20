@@ -20,7 +20,7 @@ jQuery(function ($) {
     datepicker.datetimepicker({
         locale: moment.locale(),
         format: 'L',
-        minDate: moment(),
+        minDate: new Date().setHours(0,0,0,0),
         maxDate: moment().add(1, 'years'),
         dateFormat: "yy/mm/dd",
         daysOfWeekDisabled: [0, 2],
